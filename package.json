@@ -4,8 +4,25 @@
   "engines": {
     "node": ">=22.13.0"
   },
+  "scripts": {
+    "test": "playwright test",
+    "test:auth": "playwright test tests/auth/",
+    "test:ecommerce": "playwright test tests/ecommerce/",
+    "test:automation": "playwright test tests/automation-playgrounds/",
+    "test:forms": "playwright test tests/forms/",
+    "test:benchmarks": "playwright test tests/benchmarks/",
+    "test:cache": "playwright test tests/benchmarks/cache-metrics.spec.ts",
+    "test:disagreements": "playwright test tests/benchmarks/model-disagreement.spec.ts",
+    "dashboard": "ts-node dashboard/generate.ts",
+    "report": "playwright show-report"
+  },
   "dependencies": {
     "dotenv": "^17.4.2",
     "passmark": "^1.0.10"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
   }
 }
