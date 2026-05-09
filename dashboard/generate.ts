@@ -3,7 +3,6 @@ import path from "path";
 import { loadScores, type FlowScore } from "../lib/logger";
 import { SITES } from "../lib/sites";
 
-
 const OUT = path.resolve(__dirname, "index.html");
 
 const FLOW_LABELS: Record<string, string> = {
@@ -60,22 +59,6 @@ function buildScorecard(scores: FlowScore[]): string {
   return rows.join("");
 }
 
-function buildDisagreementTable(disagreements: any[]): string {
-  if (disagreements.length === 0)
-    return "<p>No disagreements recorded yet. Run the benchmarks suite.</p>";
-
-  return disagreements
-    .map(
-      (d) => `
-    <tr>
-      <td class="assertion">"${d.assertion.slice(0, 80)}${d.assertion.length > 80 ? "…" : ""}"</td>
-      <td class="${d.claudeVerdict}">${d.claudeVerdict}</td>
-      <td class="${d.geminiVerdict}">${d.geminiVerdict}</td>
-      <td>${d.arbiterUsed ? "yes → " + d.finalVerdict : "—"}</td>
-    </tr>`,
-    )
-    .join("");
-}
 
 function generate() {
   const scores = loadScores();
@@ -151,21 +134,6 @@ function generate() {
     <tbody>
       ${buildScorecard(scores)}
     </tbody>
-  </table>
-
-  <h2>Model Disagreements (Claude vs Gemini)</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Assertion</th>
-        <th>Claude</th>
-        <th>Gemini</th>
-        <th>Arbiter used?</th>
-      </tr>
-    </thead>
-    // <tbody>
-    //   ${buildDisagreementTable(disagreements)}
-    // </tbody>
   </table>
 
   <footer>

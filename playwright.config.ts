@@ -1,24 +1,36 @@
 import dotenv from "dotenv";
 import path from "path";
-import { configure, emailsinkProvider } from "passmark";
 import { defineConfig, devices } from "@playwright/test";
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const requiredEnvVars = ["OPENROUTER_API_KEY"];
-
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     throw new Error(`Environment variable not set: ${envVar}`);
   }
 }
 
+const { configure, emailsinkProvider } = require("passmark") as typeof import("passmark");
+
 configure({
   ai: {
     gateway: "openrouter",
+    models: {
+      stepExecution: "google/gemini-2.5-flash",
+      userFlowLow: "google/gemini-2.5-flash",
+      userFlowHigh: "google/gemini-2.5-flash",
+      assertionSecondary: "google/gemini-2.5-flash",
+      assertionArbiter: "google/gemini-2.5-flash",
+    },
   },
   email: emailsinkProvider({}),
 });
+
+console.log(
+  "[webmark] Passmark configured. Redis:",
+  process.env.REDIS_URL ? "enabled :)" : "disabled :( set REDIS_URL",
+);
 
 export default defineConfig({
   testDir: "./tests",
@@ -47,17 +59,12 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
+
   testMatch: [
     "**/benchmarks/cache-metrics.spec.ts",
-    // "**/benchmarks/model-disagreement.spec.ts",
     "**/auth/**/*.spec.ts",
-    // "**/ecommerce/**/*.spec.ts",
-    // "**/automation-playgrounds/**/*.spec.ts",
-    // "**/forms/**/*.spec.ts",
+    "**/ecommerce/**/*.spec.ts",
+    "**/automation-playgrounds/uitestingplayground.spec.ts",
+    "**/automation-playgrounds/hoppscotch.spec.ts",
   ],
 });
-
-console.log(
-  "[webmark] Passmark configured. Redis:",
-  process.env.REDIS_URL ? "enabled :)" : "disabled :( set REDIS_URL",
-);

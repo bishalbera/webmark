@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebMark — State of the Web</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f0f11; color: #e2e2e4; padding: 2rem; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.25rem; font-weight: 600; margin: 2rem 0 1rem; color: #a0a0a8; border-bottom: 1px solid #2a2a30; padding-bottom: 0.5rem; }
+    .subtitle { color: #70707a; margin-bottom: 2rem; font-size: 0.9rem; }
+    .summary { display: flex; gap: 1.5rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .stat { background: #1a1a20; border: 1px solid #2a2a30; border-radius: 10px; padding: 1rem 1.5rem; min-width: 120px; }
+    .stat .number { font-size: 2rem; font-weight: 700; }
+    .stat .label { font-size: 0.8rem; color: #70707a; margin-top: 0.25rem; }
+    .stat.green .number { color: #4ade80; }
+    .stat.red .number { color: #f87171; }
+    .stat.yellow .number { color: #fbbf24; }
+    table { width: 100%; border-collapse: collapse; background: #1a1a20; border-radius: 10px; overflow: hidden; font-size: 0.85rem; }
+    th { background: #2a2a30; padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #a0a0a8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #2a2a30; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .site-name { min-width: 200px; }
+    .url { color: #70707a; }
+    .category { background: #2a2a30; border-radius: 4px; padding: 1px 6px; font-size: 0.7rem; color: #a0a0a8; }
+    .score { font-weight: 700; font-size: 1rem; text-align: center; min-width: 70px; }
+    .score.good { color: #4ade80; }
+    .score.medium { color: #fbbf24; }
+    .score.bad { color: #f87171; }
+    .badge { display: inline-block; border-radius: 4px; padding: 2px 7px; font-size: 0.75rem; font-weight: 600; }
+    .badge.pass { background: #14532d; color: #4ade80; }
+    .badge.fail { background: #450a0a; color: #f87171; }
+    .badge.partial { background: #451a03; color: #fbbf24; }
+    .badge.skip { background: #1a1a20; color: #70707a; }
+    .assertion { font-style: italic; color: #c0c0c8; max-width: 400px; }
+    .pass { color: #4ade80; }
+    .fail { color: #f87171; }
+    footer { margin-top: 3rem; color: #70707a; font-size: 0.8rem; text-align: center; }
+    a { color: #818cf8; }
+  </style>
+</head>
+<body>
+  <h1>🌐 WebMark</h1>
+  <p class="subtitle">AI regression testing across 12 public websites · Hashnode Breaking Things Hackathon 2026 · Powered by <a href="https://passmark.dev" target="_blank">Passmark</a></p>
+
+  <div class="summary">
+    <div class="stat green"><div class="number">12</div><div class="label">Flows passing</div></div>
+    <div class="stat red"><div class="number">11</div><div class="label">Flows failing</div></div>
+    <div class="stat yellow"><div class="number">0</div><div class="label">Partial</div></div>
+    <div class="stat"><div class="number">23</div><div class="label">Total flows tested</div></div>
+    <div class="stat"><div class="number">6</div><div class="label">Sites tested</div></div>
+  </div>
+
+  <h2>Site Scorecard</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Site</th>
+        <th>Score</th>
+        <th colspan="6">Flows</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td class="site-name">
+          <strong>Vercel Commerce</strong><br>
+          <small class="url">https://demo.vercel.store</small><br>
+          <small class="category">ecommerce</small>
+        </td>
+        <td class="score bad">1/3<br><small>33%</small></td>
+        <td title=""><span class="badge pass">✓ pass</span><br><small>Browse + Add to cart</small></td><td title="The cart is explicitly shown as empty in both the screenshot and the accessibility snapshot (ref=e210), which states 'Your cart is empty.' Therefore, the product from the previous test was not persisted.
+
+[2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is"><span class="badge fail">✗ fail</span><br><small>Cart (global state)</small></td><td title="The price on the product page is $20.00 USD (ref=e231), but the price for the same item in the cart is $15.00 USD (ref=e404, e405). Since the prices do not match exactly, the assertion fails.
+
+[2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[2"><span class="badge fail">✗ fail</span><br><small>pricing-accuracy</small></td>
+      </tr>
+      <tr>
+        <td class="site-name">
+          <strong>Rallly</strong><br>
+          <small class="url">https://rallly.co</small><br>
+          <small class="category">auth</small>
+        </td>
+        <td class="score medium">2/3<br><small>67%</small></td>
+        <td title=""><span class="badge pass">✓ pass</span><br><small>create-poll</small></td><td title="The provided screenshot is a blank white image and the accessibility snapshot is empty. There is no confirmation message, results table, or thank-you message visible to indicate a vote was recorded.
+
+[2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equa"><span class="badge fail">✗ fail</span><br><small>vote-on-poll</small></td><td title=""><span class="badge pass">✓ pass</span><br><small>form-validation</small></td>
+      </tr>
+      <tr>
+        <td class="site-name">
+          <strong>DEV Community</strong><br>
+          <small class="url">https://dev.to</small><br>
+          <small class="category">auth</small>
+        </td>
+        <td class="score medium">2/3<br><small>67%</small></td>
+        <td title=""><span class="badge pass">✓ pass</span><br><small>browse-feed</small></td><td title=""><span class="badge pass">✓ pass</span><br><small>Search</small></td><td title="Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details."><span class="badge fail">✗ fail</span><br><small>Signup + Email OTP</small></td>
+      </tr>
+      <tr>
+        <td class="site-name">
+          <strong>Sauce Demo</strong><br>
+          <small class="url">https://www.saucedemo.com</small><br>
+          <small class="category">ecommerce</small>
+        </td>
+        <td class="score good">3/4<br><small>75%</small></td>
+        <td title=""><span class="badge pass">✓ pass</span><br><small>login-standard</small></td><td title=""><span class="badge pass">✓ pass</span><br><small>login-locked-out</small></td><td title="The product image for the 'Sauce Labs Backpack' is a picture of a dog with a tennis ball, which does not match the product name. Additionally, the 'Sauce Labs Bolt T-Shirt' shows a plain black t-shirt instead of the described heather gray shirt with a red bolt.
+
+[2mexpect([22m[31mreceived[39m[2"><span class="badge fail">✗ fail</span><br><small>visual-user-bugs</small></td><td title=""><span class="badge pass">✓ pass</span><br><small>checkout-pricing</small></td>
+      </tr>
+      <tr>
+        <td class="site-name">
+          <strong>UI Testing Playground</strong><br>
+          <small class="url">https://uitestingplayground.com</small><br>
+          <small class="category">automation</small>
+        </td>
+        <td class="score bad">2/6<br><small>33%</small></td>
+        <td title=""><span class="badge pass">✓ pass</span><br><small>Dynamic ID (snapshot)</small></td><td title="
+OPENAI_API_KEY isn't set. CUA mode uses OpenAI's Responses API — add OPENAI_API_KEY to your environment.
+Step: Navigate to https://uitestingplayground.com/dynamicid"><span class="badge fail">✗ fail</span><br><small>Dynamic ID (CUA)</small></td><td title=""><span class="badge pass">✓ pass</span><br><small>AJAX load (snapshot)</small></td><td title="
+OPENAI_API_KEY isn't set. CUA mode uses OpenAI's Responses API — add OPENAI_API_KEY to your environment.
+Step: Navigate to https://uitestingplayground.com/ajax"><span class="badge fail">✗ fail</span><br><small>AJAX load (CUA)</small></td><td title="
+Provider returned error
+Step: Click on the 'Button Covered by Another Element' that is partially hidden under an overlay"><span class="badge fail">✗ fail</span><br><small>Overlapping (snapshot)</small></td><td title="
+OPENAI_API_KEY isn't set. CUA mode uses OpenAI's Responses API — add OPENAI_API_KEY to your environment.
+Step: Navigate to https://uitestingplayground.com/overlappedelement"><span class="badge fail">✗ fail</span><br><small>Overlapping (CUA)</small></td>
+      </tr>
+      <tr>
+        <td class="site-name">
+          <strong>Hoppscotch</strong><br>
+          <small class="url">https://hoppscotch.io</small><br>
+          <small class="category">automation</small>
+        </td>
+        <td class="score medium">2/4<br><small>50%</small></td>
+        <td title=""><span class="badge pass">✓ pass</span><br><small>snapshot-get-request</small></td><td title="
+OPENAI_API_KEY isn't set. CUA mode uses OpenAI's Responses API — add OPENAI_API_KEY to your environment.
+Step: Navigate to https://hoppscotch.io"><span class="badge fail">✗ fail</span><br><small>cua-get-request</small></td><td title=""><span class="badge pass">✓ pass</span><br><small>snapshot-post-request</small></td><td title="
+OPENAI_API_KEY isn't set. CUA mode uses OpenAI's Responses API — add OPENAI_API_KEY to your environment.
+Step: Navigate to https://hoppscotch.io"><span class="badge fail">✗ fail</span><br><small>cua-post-request</small></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Generated Sat, 09 May 2026 03:18:25 GMT ·
+    <a href="https://github.com/yourusername/webmark" target="_blank">GitHub</a> ·
+    <a href="https://hashnode.com/hackathons/breaking-things" target="_blank">Breaking Things Hackathon</a>
+  </footer>
+</body>
+</html>

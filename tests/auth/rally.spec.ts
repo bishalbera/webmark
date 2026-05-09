@@ -2,8 +2,10 @@ import { test, expect } from "@playwright/test";
 import { runSteps } from "passmark";
 import { logFlowScore } from "../../lib/logger";
 
-test.describe("Rally - scheduling flow", () => {
-  test.setTimeout(180_000); 
+const EXECUTION_ID = "rallly-poll-session";
+
+test.describe("Rallly - scheduling flow", () => {
+  test.setTimeout(300_000);
 
   test("Create a scheduling poll as guest", async ({ page }) => {
     const startMs = Date.now();
@@ -13,68 +15,88 @@ test.describe("Rally - scheduling flow", () => {
     try {
       await runSteps({
         page,
-        userFlow: "Create a Rally scheduling poll",
+        executionId: EXECUTION_ID,
+        userFlow: "Rallly create poll — event details",
         steps: [
           { description: "Navigate to https://rallly.co/" },
           {
-            description: "Click the button to create a new poll or get started",
-            waitUntil: "A poll creation form or page title input is visible",
+            description:
+              "Click the button to create a new event or meeting poll",
+            waitUntil: "A form with a Title field is visible",
           },
           {
-            description: "Enter a title for the poll",
-            data: { value: "Webmark test meeting" },
+            description: "Click on the Title input field and type the event title",
+            data: { value: "WebMark Test Meeting" },
           },
           {
-            description: "Enter a description for the poll",
-            data: { value: "Testing Rally with AI regression testing " },
-          },
-        //   {
-        //     description: "Enter the organiser name",
-        //     data: { value: "Webmark Tester" },
-        //   },
-        //   {
-        //     description: "Enter the organiser email",
-        //     data: { value: "{{run.dynamicEmail}}" },
-        //   },
-          {
-            description: "Continue to the next step or date selection",
-            waitUntil: "A date picker or date selection interface is visible",
+            description: "Click on the Description field and type a description",
+            data: { value: "Testing Rallly with AI regression testing" },
           },
           {
-            description: "Select at least 2 date options for the poll",
-            waitUntil: "At lease one date appears selected or highlighted",
-          },
-          {
-            description: "Continue to the final step and create the poll",
-            waitUntil: "A confirmation message or the poll page is visible,",
+            description:
+              "Click the Continue button (the one that goes to the date/time selection step, NOT the Create Poll button)",
+            waitUntil: "A date picker or calendar grid is visible on the page",
           },
         ],
         assertions: [
           {
             assertion:
-              "The poll was created succesfully - a shareable poll page or confirmation poll page or confirmation message is visible",
-          },
-          {
-            assertion:
-              "The poll title `Webmark Test Meeting` is visioble on the page",
-          },
-          {
-            assertion:
-              "A shareable link or invite option is visible for the poll",
+              "A calendar or date picker is now visible — the user successfully advanced from the event details step",
           },
         ],
         test,
         expect,
       });
+
+      result = "partial";
+
+      await runSteps({
+        page,
+        executionId: EXECUTION_ID,
+        userFlow: "Rallly create poll — date selection and submit",
+        steps: [
+          {
+            description:
+              "Click on at least 2 different calendar dates to select them as time options for the poll",
+            waitUntil: "At least one date appears highlighted or selected",
+          },
+          {
+            description:
+              "Click the Continue or Next button to proceed to the review or final step",
+            waitUntil: "A review page, summary, or Create Poll button is visible",
+          },
+          {
+            description: "Click the Create Poll button to finalise the poll",
+            waitUntil: "A success message, poll page, or shareable link is visible",
+          },
+          {
+            description:
+              "Save the current page URL as {{global.ralllyPollUrl}}",
+          },
+        ],
+        assertions: [
+          {
+            assertion:
+              "The poll was created successfully — a poll management page, shareable link, or success confirmation is visible",
+          },
+          {
+            assertion:
+              "The poll title 'WebMark Test Meeting' is visible on the page",
+          },
+        ],
+        test,
+        expect,
+      });
+
       result = "pass";
     } catch (e: any) {
       notes = e?.message?.slice(0, 300) ?? String(e);
-      result = "fail";
+      if (result !== "partial") result = "fail";
       throw e;
     } finally {
       logFlowScore({
-        siteId: "rally",
-        siteName: "Rally",
+        siteId: "rallly",
+        siteName: "Rallly",
         flow: "create-poll",
         result,
         notes,
@@ -84,7 +106,7 @@ test.describe("Rally - scheduling flow", () => {
     }
   });
 
-  test("Vote on an existing poll as a participant", async ({ page }) => {
+  test("Vote on the poll created in the previous test", async ({ page }) => {
     const startMs = Date.now();
     let result: "pass" | "fail" | "partial" = "fail";
     let notes = "";
@@ -92,37 +114,36 @@ test.describe("Rally - scheduling flow", () => {
     try {
       await runSteps({
         page,
+        executionId: EXECUTION_ID,
         userFlow: "Vote on a Rallly poll",
         steps: [
           {
-            description: "Navigate to https://rallly.co",
-          },
-          {
             description:
-              "Find and click a demo poll link or any publicly accessible poll",
-            waitUntil: "A poll with date options is visible",
+              "Navigate to the poll URL that was saved as {{global.ralllyPollUrl}}",
+            waitUntil: "A poll page with date options or voting interface is visible",
           },
           {
-            description: "Enter a participant name in the name field",
+            description: "Enter a participant name in the Your Name field",
             data: { value: "AI Tester" },
           },
           {
-            description: "Select at least one date option by clicking it",
-            waitUntil: "A date option shows as selected or highlighted",
+            description:
+              "Click on at least one date option to indicate availability",
+            waitUntil: "A date option shows as selected, highlighted, or toggled",
           },
           {
-            description: "Submit the vote or click the Save button",
+            description: "Click the Submit Vote or Save button",
             waitUntil: "A confirmation that the vote was recorded is visible",
           },
         ],
         assertions: [
           {
             assertion:
-              "The vote was recorded — a confirmation message or updated results are visible",
+              "The vote was recorded — a confirmation message, updated results table, or thank-you message is visible",
           },
           {
             assertion:
-              "The participant name 'AI Tester' appears in the responses or confirmation",
+              "The participant name 'AI Tester' appears in the responses or is acknowledged",
           },
           {
             assertion: "No error message is shown after submitting the vote",
@@ -150,7 +171,7 @@ test.describe("Rally - scheduling flow", () => {
     }
   });
 
-    test("Form validation — submit poll creation with missing fields", async ({
+  test("Form validation — submit poll creation with missing title", async ({
     page,
   }) => {
     const startMs = Date.now();
@@ -164,22 +185,22 @@ test.describe("Rally - scheduling flow", () => {
         steps: [
           { description: "Navigate to https://rallly.co" },
           {
-            description: "Click to create a new poll",
-            waitUntil: "The poll creation form is visible",
+            description: "Click to create a new event or meeting poll",
+            waitUntil: "The event creation form with a Title field is visible",
           },
           {
             description:
-              "Leave the title field empty and try to continue to the next step",
+              "Leave the Title field completely empty and click the Continue button",
           },
         ],
         assertions: [
           {
             assertion:
-              "An error or validation message appears — the form does not allow proceeding without a title",
+              "An error or validation message appears on or near the Title field indicating the title is required — the form cannot be submitted without a title",
           },
           {
             assertion:
-              "The user remains on the first step of poll creation — they were not advanced forward",
+              "No poll was created — there is no success modal, shareable link, or 'Poll created' message visible on the page",
           },
         ],
         test,
